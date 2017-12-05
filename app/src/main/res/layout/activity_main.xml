@@ -12,12 +12,12 @@
         android:id="@+id/bt_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="播放视频"/>
+        android:background="@drawable/play"/>
 
     <Button
         android:id="@+id/bt_record"
-        android:layout_marginTop="100dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="录制视频"/>
+        android:layout_marginTop="100dp"
+        android:background="@drawable/record"/>
 </LinearLayout>

@@ -42,7 +42,6 @@ public class VideoRecorderActivity extends Activity {
     private MediaRecorder mMediaRecorder;
     private CaptureRequest.Builder mPreviewBuilder;
     private CameraCaptureSession mPreviewSession;
-    private boolean mIsRecordingVideo;
     private String mNextVideoAbsolutePath =
             Environment.getExternalStorageDirectory().getAbsolutePath() + "/ImoocVideos";
 
@@ -181,18 +180,11 @@ public class VideoRecorderActivity extends Activity {
             mMediaRecorder = new MediaRecorder();
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager
                     .PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
                 return;
             }
             manager.openCamera(cameraId, mStateCallback, null);
         } catch (CameraAccessException e) {
-            Toast.makeText(this, "Cannot access the camera.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "打开相机失败", Toast.LENGTH_SHORT).show();
             finish();
         } catch (NullPointerException ignored) {
         }
@@ -247,7 +239,6 @@ public class VideoRecorderActivity extends Activity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mIsRecordingVideo = true;
                             mMediaRecorder.start();
                         }
                     });
@@ -274,13 +265,12 @@ public class VideoRecorderActivity extends Activity {
 
     private void stopRecordingVideo() {
         // UI
-        mIsRecordingVideo = false;
         startPreview();
         // Stop recording
         mMediaRecorder.stop();
         mMediaRecorder.reset();
 
-        Toast.makeText(this, "Video saved: " + mNextVideoAbsolutePath,
+        Toast.makeText(this, "视频保存在: " + mNextVideoAbsolutePath,
                 Toast.LENGTH_SHORT).show();
         Log.d("MCLOG", "Video saved: " + mNextVideoAbsolutePath);
         mNextVideoAbsolutePath = null;
@@ -304,19 +294,5 @@ public class VideoRecorderActivity extends Activity {
         mBackgroundThread = new HandlerThread("CameraBackground");
         mBackgroundThread.start();
         mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
-    }
-
-    /**
-     * Stops the background thread and its {@link Handler}.
-     */
-    private void stopBackgroundThread() {
-        mBackgroundThread.quitSafely();
-        try {
-            mBackgroundThread.join();
-            mBackgroundThread = null;
-            mBackgroundHandler = null;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }
